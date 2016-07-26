@@ -1,0 +1,43 @@
+{
+    "name": "comodojo/dispatcher-assets-loader",
+    "description": "Assets loader for dispatcher and comodojo frameworks",
+    "license": "MIT",
+    "keywords": [],
+    "homepage": "https://comodojo.org",
+    "support": {
+        "issues": "https://github.com/comodojo/dispatcher-assets-loader/issues"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bundle\\": "src/"
+        }
+    },
+    "require": {
+        "matthiasmullie/minify": "1.3.*"
+    },
+    "extra": {
+        "comodojo-service-route": [
+            {
+                "route": "assets",
+                "query": [
+                    {
+                        "vendor*": ".+"
+                    },
+                    {
+                        "package*": ".+",
+                        "type": "\\.(js|css)"
+                    },
+                    {
+                        "filename": "^(.+?)\\.(\\w+?)$"
+                    }
+                ],
+                "type": "ROUTE",
+                "class": "\\Bundle\\Service\\GetAssets",
+                "parameters": {
+                    "cache": "SERVER",
+                    "ttl": 3600
+                }
+            }
+        ]
+    }
+}
