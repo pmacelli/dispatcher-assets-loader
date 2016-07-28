@@ -9,7 +9,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Bundle\\": "src/"
+            "Bundle\\": "src/",
+            "Comodojo\\Dispatcher\\Service\\": "src/Service"
         }
     },
     "require": {

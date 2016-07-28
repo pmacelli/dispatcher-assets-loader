@@ -16,7 +16,7 @@ class GetAssets extends AbstractService {
             
             if (isset($params['type'])) {
                 
-                $loader->loadMinifiedFiles($params['type']);
+                $loader->loadMinifiedFiles($params['type'][1]);
                 
             } else {
                 

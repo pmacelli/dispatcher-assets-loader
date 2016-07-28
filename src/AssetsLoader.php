@@ -1,6 +1,5 @@
-<?php namespace \Bundle;
+<?php namespace Bundle;
 
-use \MatthiasMullie\Minify;
 use \Comodojo\Exception\DispatcherException;
 use \Exception;
 
@@ -21,18 +20,18 @@ class AssetsLoader {
     
     private $min_supported = array(
         "js" => array(
-            "class" => "Minify\\JS",
+            "class" => "\\MatthiasMullie\\Minify\\JS",
             "mime" => "text/javascript"
         ),
         "css" => array(
-            "class" => "Minify\\CSS",
+            "class" => "\\MatthiasMullie\\Minify\\CSS",
             "mime" => "text/css"
         )
     );
     
     function __construct($vendor, $package) {
         
-        $base_path = dirname(__FILE__, 4);
+        $base_path = dirname(dirname(dirname(dirname(__FILE__))));
         
         $this->path = $base_path . "/" . $vendor . "/" . $package . "/assets";
         
@@ -62,13 +61,13 @@ class AssetsLoader {
         
     }
         
-    public function getMinifiedFiles($type) {
+    public function loadMinifiedFiles($type) {
         
         if (in_array($type, array_keys($this->min_supported))) {
             
             $files = $this->getFilesByType($type);
             
-            $class = $this->min_supproted[$type]['class'];
+            $class = $this->min_supported[$type]['class'];
             
             $minifier = new $class();
             
@@ -78,7 +77,7 @@ class AssetsLoader {
                 
             }
             
-            $this->mime = $this->min_supproted[$type]['mime'];
+            $this->mime = $this->min_supported[$type]['mime'];
             
             $this->content = $minifier->minify();
             
@@ -104,7 +103,7 @@ class AssetsLoader {
         
     }
     
-    public function getFile($type, $name) {
+    public function loadFile($type, $name) {
         
         $files = $this->getFiles($type);
         
@@ -114,7 +113,7 @@ class AssetsLoader {
             
             if (in_array($type, array_keys($this->min_supported))) {
                 
-                $this->getMinifiedFile($type, $files[$filename]['path']);
+                $this->loadMinifiedFile($type, $files[$filename]['path']);
                 
             } else {
                 
@@ -134,13 +133,13 @@ class AssetsLoader {
         
     }
         
-    private function getMinifiedFile($type, $path) {
+    private function loadMinifiedFile($type, $path) {
             
-        $class = $this->min_supproted[$type]['class'];
+        $class = $this->min_supported[$type]['class'];
         
         $minifier = new $class($path);
         
-        $this->mime = $this->min_supproted[$type]['mime'];
+        $this->mime = $this->min_supported[$type]['mime'];
         
         $this->content = $minifier->minify();
         
@@ -160,7 +159,7 @@ class AssetsLoader {
                 
                 $list[basename($file)] = array(
                     "path" => $file,
-                    "mime" => mime_content_type ($file)
+                    "mime" => mime_content_type($file)
                 );
                 
             }
@@ -183,7 +182,7 @@ class AssetsLoader {
                 
                 $list[basename($file)] = array(
                     "path" => $file,
-                    "mime" => mime_content_type ($file)
+                    "mime" => mime_content_type($file)
                 );
                 
             }
