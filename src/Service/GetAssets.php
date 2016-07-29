@@ -8,7 +8,7 @@ class GetAssets extends AbstractService {
     
     public function get() {
         
-        $params = $this->request()->query()->get();
+        $params = $this->request->query->get();
         
         try {
             
@@ -43,9 +43,9 @@ class GetAssets extends AbstractService {
             
         }
         
-        $this->response()->headers()->set("Content-Type", $loader->getLoadedMimeType());
+        $this->response->headers->set("Content-Type", $loader->getLoadedMimeType());
         
-        $this->response()->headers()->set("Content-Length", $loader->getLoadedContentSize());
+        $this->response->headers->set("Content-Length", $loader->getLoadedContentSize());
         
         return $loader->getLoadedContent();
         
