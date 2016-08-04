@@ -9,40 +9,37 @@
     },
     "autoload": {
         "psr-4": {
-            "Bundle\\": "src/",
-            "Comodojo\\Dispatcher\\Service\\": "src/Service"
+            "Comodojo\\DispatcherAssetsLoader\\": "src/"
         }
     },
     "require": {
         "matthiasmullie/minify": "1.3.*"
     },
     "extra": {
-        "comodojo-bundle": [
-            {
-                "routes": [
-                    {
-                        "route": "assets",
-                        "query": [
-                            {
-                                "vendor*": ".+"
-                            },
-                            {
-                                "package*": ".+",
-                                "type": "\\.(js|css)"
-                            },
-                            {
-                                "filename": "^(.+?)\\.(\\w+?)$"
-                            }
-                        ],
-                        "type": "ROUTE",
-                        "class": "\\Comodojo\\Dispatcher\\Service\\GetAssets",
-                        "parameters": {
-                            "cache": "SERVER",
-                            "ttl": 3600
+        "comodojo-bundle": {
+            "routes": [
+                {
+                    "route": "assets",
+                    "query": [
+                        {
+                            "vendor*": ".+"
+                        },
+                        {
+                            "package*": ".+",
+                            "type": "\\.(js|css)"
+                        },
+                        {
+                            "filename": "^(.+?)\\.(\\w+?)$"
                         }
+                    ],
+                    "type": "ROUTE",
+                    "class": "\\Comodojo\\Dispatcher\\Service\\GetAssets",
+                    "parameters": {
+                        "cache": "SERVER",
+                        "ttl": 86400
                     }
-                ]
-            }
-        ]
+                }
+            ]
+        }
     }
 }
