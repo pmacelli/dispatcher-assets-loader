@@ -1,6 +1,7 @@
 {
     "name": "comodojo/dispatcher-assets-loader",
     "description": "Assets loader for dispatcher and comodojo frameworks",
+    "type": "comodojo-bundle",
     "license": "MIT",
     "keywords": [],
     "homepage": "https://comodojo.org",
