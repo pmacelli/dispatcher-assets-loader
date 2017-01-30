@@ -9,27 +9,38 @@ class GetAssets extends AbstractService {
 
     public function get() {
 
-        $params = $this->request->query->get();
+        // framework components
+        $query = $this->request->query;
+        $base_path = $this->configuration->get('base-path');
+        $logger = $this->logger;
+
+        // required parts
+        $vendor = $query->get('vendor');
+        $package = $query->get('package');
+
+        // optional parts
+        $type = $query->get('type');
+        $filename = $query->get('filename');
+        $minify = $query->get('minify') == 'yes' ? true : false;
 
         try {
 
-            $loader = new AssetsLoader($params['vendor'], $params['package']);
+            $loader = new AssetsLoader($base_path, $vendor, $package, $logger);
 
-            if (isset($params['type'])) {
+            if ( $type !== null ) {
 
-                $loader->loadMinifiedFiles($params['type'][1]);
+                $loader->loadBulk($type[1], $minify);
+
+            } else if ( $filename === null ) {
+
+                throw new DispatcherException("Filename not specified", 0, null, 404);
 
             } else {
 
-                if (!isset($params['filename'])) {
-
-                    throw new DispatcherException("You must specify a filename!", 0, null, 404);
-
-                }
-
                 $loader->loadFile(
-                    $params['filename'][2], // File extension
-                    $params['filename'][1]  // File name
+                    $filename[2], // File extension
+                    $filename[1],  // File name
+                    $minify
                 );
 
             }
@@ -44,11 +55,9 @@ class GetAssets extends AbstractService {
 
         }
 
-        $this->response->headers->set("Content-Type", $loader->getLoadedMimeType());
+        $this->response->content->type($loader->getMime());
 
-        $this->response->headers->set("Content-Length", $loader->getLoadedContentSize());
-
-        return $loader->getLoadedContent();
+        return $loader->getContent();
 
     }
 

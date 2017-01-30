@@ -1,195 +1,117 @@
 <?php namespace Comodojo\DispatcherAssetsLoader;
 
+use \Mimey\MimeTypes;
+use \Psr\Log\LoggerInterface;
 use \Comodojo\Exception\DispatcherException;
 use \Exception;
 
 class AssetsLoader {
 
-    private $path;
+    protected $logger;
 
-    private $content = "";
+    protected $path;
+    protected $fs;
 
-    private $mime = "text/plain";
+    protected $content;
 
-    private $supported = array(
-        "js" => "js",
-        "html" => "html",
-        "jst" => "templates",
-        "css" => "css"
-    );
+    protected $mime;
+    protected $mimes;
 
-    private $min_supported = array(
-        "js" => array(
-            "class" => "\\MatthiasMullie\\Minify\\JS",
-            "mime" => "text/javascript"
-        ),
-        "css" => array(
-            "class" => "\\MatthiasMullie\\Minify\\CSS",
-            "mime" => "text/css"
-        )
-    );
+    protected $supported = [
+        "js" => "\\MatthiasMullie\\Minify\\JS",
+        "css" => "\\MatthiasMullie\\Minify\\CSS"
+    ];
 
-    function __construct($vendor, $package) {
+    function __construct($base_path, $vendor, $package, LoggerInterface $logger) {
 
-        $base_path = dirname(dirname(dirname(dirname(__FILE__))));
+        $this->logger = $logger;
+        $this->mimes = new MimeTypes;
 
-        $this->path = $base_path . "/" . $vendor . "/" . $package . "/assets";
-
-        if (!file_exists($this->path)) {
-
-            throw new DispatcherException("The package assets for $vendor/$package are not available!", 0, null, 404);
-
-        }
+        $this->path = "$base_path/vendor/$vendor/$package/assets";
 
     }
 
-    public function getLoadedContent() {
+    public function getContent() {
 
         return $this->content;
 
     }
 
-    public function getLoadedContentSize() {
-
-        return strlen($this->content);
-
-    }
-
-    public function getLoadedMimeType() {
+    public function getMime() {
 
         return $this->mime;
 
     }
 
-    public function loadMinifiedFiles($type) {
+    public function loadFile($type, $name, $minify = false) {
 
-        if (in_array($type, array_keys($this->min_supported))) {
+        $file = $this->path."/$name.$type";
 
-            $files = $this->getFilesByType($type);
+        //if ( $this->fs->has($file) ) {
 
-            $class = $this->min_supported[$type]['class'];
+            // $content = $this->fs->read($file);
+            // $mime = $this->fs->getMimetype($file);
 
-            $minifier = new $class();
+        if ( file_exists($file) and is_readable($file) ) {
 
-            foreach ($files as $file) {
+            $content = file_get_contents($file);
 
-                $minifier->add($file['path']);
+            $this->content = ($minify && $this->couldBeMinified($type)) ?
+                $this->minify($type, $content) : $content;
+            $this->mime = $this->mimes->getMimeType($type);;
+
+        } else {
+            throw new DispatcherException("File $file not found!", 0, null, 404);
+        }
+
+        return $this;
+
+    }
+
+    public function loadBulk($type, $minify = false) {
+
+        if ( array_key_exists($type, $this->supported) ) {
+
+            $contents = [];
+
+            $path = $this->path."/$type";
+            $filter = "$path/*.$type";
+
+            foreach (glob($filter) as $file) {
+
+                $contents[] = file_get_contents($file);
 
             }
 
-            $this->mime = $this->min_supported[$type]['mime'];
+            $this->mime = $this->mimes->getMimeType($type);
 
-            $this->content = $minifier->minify();
+            $this->content = $minify ? $this->minify($type, ...$contents) : implode("", $contents);
 
             return $this;
 
         }
 
-        throw new DispatcherException("This format cannot be minified!", 0, null, 404);
+    }
+
+    protected function couldBeMinified($type) {
+
+        return array_key_exists($type, $this->supported);
 
     }
 
-    public function getFiles($type) {
+    protected function minify($type, ...$contents) {
 
-        if (in_array($type, array_keys($this->supported))) {
+        $class = $this->supported[$type];
 
-            return $this->getFilesByType($type);
+        $minifier = new $class();
 
-        } else {
+        foreach ($contents as $content) {
 
-            return $this->getDataFiles($type);
+            $minifier->add($content);
 
         }
 
-    }
-
-    public function loadFile($type, $name) {
-
-        $files = $this->getFiles($type);
-
-        $filename = $name . "." . $type;
-
-        if (isset($files[$filename])) {
-
-            if (in_array($type, array_keys($this->min_supported))) {
-
-                $this->loadMinifiedFile($type, $files[$filename]['path']);
-
-            } else {
-
-                $this->mime = $files[$filename]['mime'];
-
-                $this->content = file_get_contents($files[$filename]['path']);
-
-            }
-
-        } else {
-
-            throw new DispatcherException("File $filename not found!", 0, null, 404);
-
-        }
-
-        return $this;
-
-    }
-
-    private function loadMinifiedFile($type, $path) {
-
-        $class = $this->min_supported[$type]['class'];
-
-        $minifier = new $class($path);
-
-        $this->mime = $this->min_supported[$type]['mime'];
-
-        $this->content = $minifier->minify();
-
-        return $this;
-
-    }
-
-    private function getFilesByType($type) {
-
-        $list = array();
-
-        $path = $this->path . "/" . $this->supported[$type];
-
-        if (isset($this->supported[$type]) && file_exists($path)) {
-
-            foreach (glob($path . "/*." . $type) as $file) {
-
-                $list[basename($file)] = array(
-                    "path" => $file,
-                    "mime" => mime_content_type($file)
-                );
-
-            }
-
-        }
-
-        return $list;
-
-    }
-
-    private function getDataFiles($filter) {
-
-        $list = array();
-
-        $path = $this->path . "/data";
-
-        if (file_exists($path)) {
-
-            foreach (glob($path . "/*." . $filter) as $file) {
-
-                $list[basename($file)] = array(
-                    "path" => $file,
-                    "mime" => mime_content_type($file)
-                );
-
-            }
-
-        }
-
-        return $list;
+        return $minifier->minify();
 
     }
 

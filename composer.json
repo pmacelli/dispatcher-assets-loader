@@ -15,7 +15,8 @@
     },
     "require": {
         "matthiasmullie/minify": "^1.3",
-        "comodojo/dispatcher.framework": "^4.0"
+        "comodojo/dispatcher.framework": "^4.0",
+        "ralouphie/mimey": "^1.0"
     },
     "extra": {
         "routes": {
@@ -33,7 +34,7 @@
                     }
                 ],
                 "type": "ROUTE",
-                "class": "\\Comodojo\\Dispatcher\\Service\\GetAssets",
+                "class": "\\Comodojo\\DispatcherAssetsLoader\\Service\\GetAssets",
                 "parameters": {
                     "cache": "SERVER",
                     "ttl": 86400
