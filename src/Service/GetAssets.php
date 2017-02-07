@@ -51,7 +51,7 @@ class GetAssets extends AbstractService {
 
         } catch (Exception $e) {
 
-            throw new DispatcherException($e->getMessage(), 0, null, 500);
+            throw new DispatcherException($e->getMessage(), 0, $e, 500);
 
         }
 
