@@ -10,9 +10,9 @@ class GetAssets extends AbstractService {
     public function get() {
 
         // framework components
-        $query = $this->request->query;
-        $base_path = $this->configuration->get('base-path');
-        $logger = $this->logger;
+        $query = $this->getRequest()->getQuery();
+        $base_path = $this->getConfiguration()->get('base-path');
+        $logger = $this->getLogger();
 
         // required parts
         $vendor = $query->get('vendor');
@@ -55,7 +55,7 @@ class GetAssets extends AbstractService {
 
         }
 
-        $this->response->content->type($loader->getMime());
+        $this->getResponse()->getContent()->type($loader->getMime());
 
         return $loader->getContent();
 
