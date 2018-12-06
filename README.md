@@ -1,8 +1,8 @@
 # comodojo/dispatcher-assets-loader
 
-Dispatcher service to load and cache assets from composer packages. It can also minify and merge js and css assets.
+Ready-to-use comodojo/dispatcher service to load and cache assets from composer packages. It can also minify and merge .js and .css assets.
 
-** This is the development branch, please do not use it in production**
+**This is the development branch, please do not use it in production**
 
 ## Installation
 
