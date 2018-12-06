@@ -2,8 +2,6 @@
 
 Ready-to-use comodojo/dispatcher service to load and cache assets from composer packages. It can also minify and merge .js and .css assets.
 
-**This is the development branch, please do not use it in production**
-
 ## Installation
 
 This plugin can be installed in a dispatcher project ([dispatcher base project](https://github.com/comodojo/dispatcher) or a custom one) typing:
