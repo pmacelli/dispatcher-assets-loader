@@ -1,5 +1,5 @@
 {
-    "name": "comodojo/dispatcher-assets-loader",
+    "name": "pmarcelli/dispatcher-assets-loader",
     "description": "Assets loader for dispatcher and comodojo frameworks",
     "type": "comodojo-bundle",
     "license": "MIT",
