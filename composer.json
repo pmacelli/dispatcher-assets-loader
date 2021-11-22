@@ -1,5 +1,5 @@
 {
-    "name": "comodojo/dispatcher-assets-loader",
+    "name": "pmarcelli/dispatcher-assets-loader",
     "description": "Assets loader for dispatcher and comodojo frameworks",
     "type": "comodojo-bundle",
     "license": "MIT",
@@ -14,8 +14,8 @@
         }
     },
     "require": {
-        "comodojo/dispatcher.framework": "dev-master",
-        "comodojo/comodojo-installer": "dev-master",
+        "pmarcelli/dispatcher.framework": "dispatcher-framework_u7320",
+        "pmarcelli/comodojo-installer": "dev-comodojo-installer_u7320",
         "matthiasmullie/minify": "^1.3",
         "ralouphie/mimey": "^2.0"
     },
