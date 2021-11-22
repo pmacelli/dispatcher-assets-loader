@@ -14,7 +14,7 @@
         }
     },
     "require": {
-        "pmarcelli/dispatcher.framework": "dispatcher-framework_u7320",
+        "pmarcelli/dispatcher.framework": "dev-dispatcher-framework_u7320",
         "pmarcelli/comodojo-installer": "dev-comodojo-installer_u7320",
         "matthiasmullie/minify": "^1.3",
         "ralouphie/mimey": "^2.0"
